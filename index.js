@@ -67,7 +67,7 @@ function thueTNCN() {
     tongThue = thuNhap * 0.1;
   } else if (thuNhap > 120e6 && thuNhap <= 210e6) {
     tongThue = thuNhap * 0.15;
-  } else if (thuNhap > 120e6 && thuNhap <= 384e6) {
+  } else if (thuNhap > 210e6 && thuNhap <= 384e6) {
     tongThue = thuNhap * 0.2;
   } else if (thuNhap > 384e6 && thuNhap <= 624e6) {
     tongThue = thuNhap * 0.25;
@@ -80,10 +80,10 @@ function thueTNCN() {
   let ketQuaThue =
     tongThue > 0
       ? `Họ tên: ${hoTen} <br>
-        Tiền thuế thu nhập cá nhân là: ${tongThue.toLocaleString("it-IT", {
-          style: "currency",
-          currency: "VND",
-        })}`
+        Tiền thuế thu nhập cá nhân là: ${tongThue.toLocaleString(
+          "vi-VN",
+          {}
+        )} VND`
       : `Số tiền nhập không hợp lệ`;
 
   document.getElementById("tongThue").innerHTML = ketQuaThue;
@@ -95,9 +95,9 @@ function disableInput() {
   let soKetNoi = document.getElementById("soKetNoi");
 
   if (loaiKH === "company") {
-    soKetNoi.style.display = "none";
-  } else {
     soKetNoi.style.display = "block";
+  } else {
+    soKetNoi.style.display = "none";
   }
 }
 
@@ -105,6 +105,45 @@ function disableInput() {
 function tinhTienCap() {
   let loaiKH = document.getElementById("loaiKH").value;
   let maKH = document.getElementById("maKH").value;
-  let soKenh = document.getElementById("soKenh").value * 1;
-  let soKetNoi = document.getElementById("soKetNoi") * 1;
+  let soKenh = document.getElementById("soKenh").value;
+  let soKetNoi = document.getElementById("soKetNoi").value;
+  let tongTienCap = HDCap(loaiKH, soKenh, soKetNoi);
+
+  if (loaiKH == "") {
+    document.getElementById("tongCap").innerHTML =
+      "Vui lòng chọn loại khách hàng";
+  } else {
+    document.getElementById(
+      "tongCap"
+    ).innerHTML = `Mã Khách Hàng: ${maKH} - Tổng tiền cáp:
+    ${tongTienCap} $`;
+  }
+}
+document.getElementById("btnTinhTienCap").onclick = tinhTienCap;
+
+function HDCap(loaiKH, soKenh, soKetNoi) {
+  let phiXuLy = 0;
+  let phiDichVu = 0;
+  let kenhThue = 0;
+  
+  switch (loaiKH) {
+    case "user": {
+      phiXuLy = 4.5;
+      phiDichVu = 20.5;
+      kenhThue = 7.5 * soKenh;
+      return phiXuLy + phiDichVu + kenhThue;
+    }
+    case "company": {
+      phiXuLy = 15;
+      if (soKetNoi <= 10) 
+        {
+        phiDichVu = 75;
+      } 
+      else {
+        phiDichVu = 75 + (soKetNoi - 10) * 5;
+      }
+      kenhThue = 50 * soKenh;
+      return phiXuLy + phiDichVu + kenhThue;
+    }
+  }
 }
